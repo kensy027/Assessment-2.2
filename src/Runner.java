@@ -4,11 +4,13 @@ import java.util.*;
 public class Runner {
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Usage: java Runner <filename> <max_courses_per_semester>");
+            System.out.println("Usage: java Runner <filename> <course_type>");
             return;
         }
 
         String filename = args[0];
+        String courseType = args[1].toUpperCase();
+        int maxCourses = courseType.equals("XBDA") ? 23 : 22;
 
         System.out.println("Welcome to the program. Please note if you would like to partake in other study periods rather than 2 and 5, you may need to contact your course coordinator.");
 
@@ -16,7 +18,7 @@ public class Runner {
             System.out.print("Enter the number of subjects you have completed: ");
             int completedSubjects = scanner.nextInt();
 
-            if (completedSubjects == 22) {
+            if (completedSubjects >= maxCourses) {
                 System.out.println("You have completed all required courses.");
                 return;
             }
@@ -33,8 +35,7 @@ public class Runner {
             String completedCourseCodesInput = scanner.nextLine();
             List<String> completedCourseCodes = Arrays.asList(completedCourseCodesInput.split("\\s*,\\s*"));
 
-            int totalCourses = 22;
-            int remainingCourses = totalCourses - completedSubjects;
+            int remainingCourses = maxCourses - completedSubjects;
 
             Graph graph = FileReader.readGraphFromFile(filename);
             List<List<String>> studyPlan = Scheduler.scheduleCourses(graph, remainingCourses, completedCourseCodes);

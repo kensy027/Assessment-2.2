@@ -8,14 +8,18 @@ public class FileReader {
             String line;
             List<String> courses = Arrays.asList(br.readLine().split(","));
             for (String course : courses) {
-                graph.getOrCreateNode(course);
+                graph.getOrCreateNode(course.trim());
             }
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                Node course = graph.getOrCreateNode(parts[0]);
-                for (int i = 1; i < parts.length; i++) {
-                    Node prerequisite = graph.getOrCreateNode(parts[i]);
-                    course.addPrerequisite(prerequisite);
+                String[] parts = line.split(",", 2);
+                String course = parts[0].trim();
+                Node courseNode = graph.getOrCreateNode(course);
+                if (parts.length > 1) {
+                    String[] prerequisites = parts[1].split(",");
+                    for (String prerequisite : prerequisites) {
+                        Node prerequisiteNode = graph.getOrCreateNode(prerequisite.trim());
+                        courseNode.addPrerequisite(prerequisiteNode);
+                    }
                 }
             }
         }

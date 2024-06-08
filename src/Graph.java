@@ -8,7 +8,16 @@ public class Graph {
     }
 
     public Node getOrCreateNode(String courseCode) {
-        return nodes.computeIfAbsent(courseCode, Node::new);
+        Node node = nodes.get(courseCode);
+        if (node == null) {
+            node = new Node(courseCode);
+            nodes.put(courseCode, node);
+        }
+        return node;
+    }
+
+    public Node getNode(String courseCode) {
+        return nodes.get(courseCode);
     }
 
     public Collection<Node> getAllNodes() {

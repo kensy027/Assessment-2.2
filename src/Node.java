@@ -13,11 +13,11 @@ public class Node {
         return courseCode;
     }
 
-    public List<Node> getPrerequisites() {
-        return prerequisites;
-    }
-
     public void addPrerequisite(Node node) {
         prerequisites.add(node);
+    }
+
+    public List<Node> getPrerequisites() {
+        return prerequisites;
     }
 }
