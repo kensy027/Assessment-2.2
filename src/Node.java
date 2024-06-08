@@ -1,21 +1,23 @@
-public class Node {
-    private String course;
-    private List<String> prerequisites;
+import java.util.*;
 
-    public Node(String course) {
-        this.course = course;
+public class Node {
+    private String courseCode;
+    private List<Node> prerequisites;
+
+    public Node(String courseCode) {
+        this.courseCode = courseCode;
         this.prerequisites = new ArrayList<>();
     }
 
-    public String getCourse() {
-        return course;
+    public String getCourseCode() {
+        return courseCode;
     }
 
-    public void addPrerequisite(String prerequisite) {
-        prerequisites.add(prerequisite);
-    }
-
-    public List<String> getPrerequisites() {
+    public List<Node> getPrerequisites() {
         return prerequisites;
+    }
+
+    public void addPrerequisite(Node node) {
+        prerequisites.add(node);
     }
 }
