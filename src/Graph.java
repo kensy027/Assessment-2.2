@@ -23,4 +23,12 @@ public class Graph {
     public Collection<Node> getAllNodes() {
         return nodes.values();
     }
+
+    public List<String> getAllCourses() {
+        List<String> allCourses = new ArrayList<>();
+        for (Node node : getAllNodes()) {
+            allCourses.add(node.getCourseCode());
+        }
+        return allCourses;
+    }
 }

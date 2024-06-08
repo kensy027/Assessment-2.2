@@ -4,11 +4,15 @@ import java.util.*;
 public class FileReader {
     public static Graph readGraphFromFile(String filename) throws IOException {
         Graph graph = new Graph();
+        Set<String> uniqueCourses = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new java.io.FileReader(filename))) {
             String line;
             List<String> courses = Arrays.asList(br.readLine().split(","));
             for (String course : courses) {
-                graph.getOrCreateNode(course.trim());
+                uniqueCourses.add(course.trim());
+            }
+            for (String course : uniqueCourses) {
+                graph.getOrCreateNode(course);
             }
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 2);

@@ -10,7 +10,7 @@ public class Runner {
 
         String filename = args[0];
         String courseType = args[1].toUpperCase();
-        int maxCourses = courseType.equals("XBDA") ? 23 : 22;
+        int maxCourses = courseType.equals("XBIT") ? 22 : 23;
 
         System.out.println("Welcome to the program. Please note if you would like to partake in other study periods rather than 2 and 5, you may need to contact your course coordinator.");
 
@@ -23,49 +23,91 @@ public class Runner {
                 return;
             }
 
-            System.out.print("Which study period are you headed towards (2 or 5)? ");
-            int upcomingStudyPeriod = scanner.nextInt();
-            if (upcomingStudyPeriod != 2 && upcomingStudyPeriod != 5) {
-                System.out.println("Invalid study period. Please enter 2 or 5.");
+            Graph graph = FileReader.readGraphFromFile(filename);
+
+            // Condition for 0 completed subjects
+            if (completedSubjects == 0) {
+                List<String> availableCourses = getAvailableCoursesWithoutPrerequisites(graph);
+                System.out.println("You have not completed any courses. Here are the recommended courses for your first study period:");
+                for (String course : availableCourses) {
+                    System.out.println(course);
+                }
                 return;
             }
 
+            int upcomingStudyPeriod = 0;
+            // Loop to ensure valid study period input
+            while (true) {
+                System.out.print("Which study period are you headed towards (2 or 5)? ");
+                upcomingStudyPeriod = scanner.nextInt();
+                if (upcomingStudyPeriod == 2 || upcomingStudyPeriod == 5) {
+                    break;
+                } else {
+                    System.out.println("Invalid study period. Please enter 2 or 5.");
+                }
+            }
+
             scanner.nextLine(); // Consume newline
-            System.out.println("Enter the course codes of the completed subjects, separated by commas: ");
-            String completedCourseCodesInput = scanner.nextLine();
-            List<String> completedCourseCodes = Arrays.asList(completedCourseCodesInput.split("\\s*,\\s*"));
+
+            List<String> completedCourseCodes = new ArrayList<>();
+            while (true) {
+                System.out.println("Enter the course codes of the completed subjects, separated by commas: ");
+                String completedCourseCodesInput = scanner.nextLine();
+                List<String> inputCodes = Arrays.asList(completedCourseCodesInput.split("\\s*,\\s*"));
+
+                boolean allValid = true;
+                Set<String> validCourseCodes = new HashSet<>(graph.getAllCourses());
+
+                for (String code : inputCodes) {
+                    String upperCaseCode = code.toUpperCase();
+                    if (!validCourseCodes.contains(upperCaseCode)) {
+                        System.out.println("Invalid course code: " + code);
+                        allValid = false;
+                        break;
+                    } else {
+                        completedCourseCodes.add(upperCaseCode);
+                    }
+                }
+
+                if (allValid) {
+                    break;
+                } else {
+                    completedCourseCodes.clear(); // Clear the list if invalid code is found
+                    System.out.println("Please re-enter valid course codes.");
+                }
+            }
 
             int remainingCourses = maxCourses - completedSubjects;
 
-            Graph graph = FileReader.readGraphFromFile(filename);
             List<List<String>> studyPlan = Scheduler.scheduleCourses(graph, remainingCourses, completedCourseCodes);
             printStudyPlan(studyPlan, upcomingStudyPeriod);
 
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error scheduling courses: " + e.getMessage());
+            System.err.println("An error occurred: " + e.getMessage());
         }
     }
 
-    private static void printStudyPlan(List<List<String>> studyPlan, int upcomingStudyPeriod) {
-        if (studyPlan.isEmpty()) {
-            System.out.println("No study plan available.");
-            return;
+    private static List<String> getAvailableCoursesWithoutPrerequisites(Graph graph) {
+        List<String> availableCourses = new ArrayList<>();
+        for (Node node : graph.getAllNodes()) {
+            if (node.getPrerequisites().isEmpty()) {
+                availableCourses.add(node.getCourseCode());
+            }
         }
+        return availableCourses;
+    }
 
-        int periodCounter = (upcomingStudyPeriod == 5) ? 0 : 1; // Start with Study Period 5 if heading to Study Period 2
-
-        String[] periodLabels = {"Study Period 5", "Study Period 2"};
-
-        for (List<String> periodCourses : studyPlan) {
-            System.out.println(periodLabels[periodCounter % periodLabels.length]);
-            for (String course : periodCourses) {
+    private static void printStudyPlan(List<List<String>> studyPlan, int initialStudyPeriod) {
+        int studyPeriod = initialStudyPeriod;
+        for (List<String> semester : studyPlan) {
+            System.out.println("Study Period " + studyPeriod);
+            for (String course : semester) {
                 System.out.println("  " + course);
             }
-            periodCounter++;
+            // Toggle study period between 2 and 5
+            studyPeriod = (studyPeriod == 2) ? 5 : 2;
         }
     }
 }
