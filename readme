@@ -1,0 +1,7 @@
+Run Runner.java class to resolve everything and then can use the following commands to actually run the program in cmd/powershell/ide terminal
+java -cp bin Runner data/XBIT XBIT
+java -cp bin Runner data/XBDA XBDA
+java -cp bin Runner data/XBIT 4
+java -cp bin Runner data/XBDA 4
+
+This program follows the similar teaching period style of UniSA, based on compulsory study periods.
