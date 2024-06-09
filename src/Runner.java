@@ -70,7 +70,12 @@ public class Runner {
                 }
 
                 if (allValid) {
-                    break;
+                    if (arePrerequisitesSatisfied(graph, completedCourseCodes)) {
+                        break;
+                    } else {
+                        completedCourseCodes.clear(); // Clear the list if prerequisites are not met
+                        System.out.println("Some prerequisites are not satisfied. Please re-enter valid course codes.");
+                    }
                 } else {
                     completedCourseCodes.clear(); // Clear the list if invalid code is found
                     System.out.println("Please re-enter valid course codes.");
@@ -109,5 +114,40 @@ public class Runner {
             // Toggle study period between 2 and 5
             studyPeriod = (studyPeriod == 2) ? 5 : 2;
         }
+    }
+
+    private static boolean arePrerequisitesSatisfied(Graph graph, List<String> completedCourseCodes) {
+        Set<String> completedSet = new HashSet<>(completedCourseCodes);
+        for (String courseCode : completedCourseCodes) {
+            Node courseNode = graph.getNode(courseCode);
+            if (courseNode != null) {
+                if (!bfsPrerequisiteCheck(graph, courseNode, completedSet)) {
+                    System.out.println("Prerequisite for course " + courseCode + " is not satisfied.");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean bfsPrerequisiteCheck(Graph graph, Node courseNode, Set<String> completedSet) {
+        Queue<Node> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(courseNode);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            visited.add(current.getCourseCode());
+            for (Node prerequisite : current.getPrerequisites()) {
+                if (!completedSet.contains(prerequisite.getCourseCode())) {
+                    System.out.println("Missing prerequisite: " + prerequisite.getCourseCode());
+                    return false;
+                }
+                if (!visited.contains(prerequisite.getCourseCode())) {
+                    queue.add(prerequisite);
+                }
+            }
+        }
+        return true;
     }
 }
