@@ -8,7 +8,6 @@
  * AI Tools Used: Copilot
  * This is my own work as defined by the University's Academic Integrity Policy.
  */
- package main;
  import java.io.*;
  import java.util.*;
  

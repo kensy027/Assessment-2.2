@@ -1,9 +1,6 @@
-package test;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
-import main.Node;
-import main.Graph;
 
 public class NodeGraphTest {
 

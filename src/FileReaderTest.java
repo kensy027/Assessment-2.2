@@ -1,10 +1,6 @@
-package test;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
-import main.Graph;
-import main.Node;
-import main.FileReader;
 
 public class FileReaderTest {
 
